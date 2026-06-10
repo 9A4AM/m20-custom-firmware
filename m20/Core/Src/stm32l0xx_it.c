@@ -154,7 +154,7 @@ void EXTI2_3_IRQHandler(void) {
 		#if ADF_PPS_CORRECTION_ENABLE
 		uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
 		int16_t fix = (-2*(cnt - SystemCoreClock))/(3*244);
-		if(-ADF_MAX_PPS_CORRECTION<fix && fix<ADF_MAX_PPS_CORRECTION) adf_set_frequency_error_correction(fix);
+		if(-ADF_MAX_PPS_CORRECTION<fix && fix<ADF_MAX_PPS_CORRECTION && (!ADF_PPS_CORRECTION_REQUIRE_FIX || gps_fix > 1)) adf_set_frequency_error_correction(fix);
 		// Check if the fix is within reasonable bounds
 		TIM22_High=0;
 		#endif

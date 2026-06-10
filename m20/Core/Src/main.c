@@ -58,6 +58,7 @@ uint8_t GpsRxBuffer[GpsRxBuffer_SIZE];
 uint16_t GpsBufferCounter = 0;
 bool GpsBufferReady = false;
 GPS GpsData;
+uint8_t *gps_fix = &GpsData.Fix;
 
 #if GPS_WATCHDOG
 struct GpsWatchdogStruct {

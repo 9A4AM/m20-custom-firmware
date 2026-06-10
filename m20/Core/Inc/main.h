@@ -59,6 +59,7 @@ extern "C" {
 /* Exported constants --------------------------------------------------------*/
 /* USER CODE BEGIN EC */
 extern uint16_t TIM22_High;
+extern uint8_t *gps_fix;
 /* USER CODE END EC */
 
 /* Exported macro ------------------------------------------------------------*/
