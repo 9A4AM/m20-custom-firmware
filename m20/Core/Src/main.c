@@ -86,6 +86,10 @@ uint16_t PvVoltage = 0;
 
 int16_t ExtTemp = 0; // *10
 
+#if ADF_PPS_CORRECTION_ENABLE
+uint16_t TIM22_High = 0;
+#endif
+
 #if APRS_ENABLE
 APRSPacket AprsPacket;
 #endif
@@ -656,7 +660,7 @@ int main(void) {
 	/* Interrupt priorites:
 	 * TIM21 - modulation timer: 0
 	 * LPUART1 - GPS UART RX: 1
-	 * TIM22 - Humidity timer (not yet): 2
+	 * TIM22 - Frequency correction timer: 2
 	 * TIM6 - LED timer: 3
 	 * SysTick: 4
 	 * TIM2 - main loop: 5
@@ -1185,9 +1189,9 @@ static void MX_TIM22_Init(void) {
 	/* USER CODE BEGIN TIM22_Init 1 */
 
 	/* USER CODE END TIM22_Init 1 */
-	TIM_InitStruct.Prescaler = 60000; // For now
+	TIM_InitStruct.Prescaler = 0;
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-	TIM_InitStruct.Autoreload = 2400; // For now
+	TIM_InitStruct.Autoreload = 65535;
 	TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
 	LL_TIM_Init(TIM22, &TIM_InitStruct);
 	LL_TIM_DisableARRPreload(TIM22);
@@ -1205,6 +1209,7 @@ static void MX_TIM22_Init(void) {
  * @retval None
  */
 static void MX_GPIO_Init(void) {
+	LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
 	LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 	/* USER CODE BEGIN MX_GPIO_Init_1 */
 	/* USER CODE END MX_GPIO_Init_1 */
@@ -1394,6 +1399,26 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
 	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(NTC_330K_GPIO_Port, &GPIO_InitStruct);
+
+	/**/
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE2);
+
+	/**/
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_2, LL_GPIO_PULL_NO);
+
+	/**/
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_INPUT);
+
+	/**/
+	EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_2;
+	EXTI_InitStruct.LineCommand = ENABLE;
+	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	LL_EXTI_Init(&EXTI_InitStruct);
+
+	/* EXTI interrupt init*/
+	NVIC_SetPriority(EXTI2_3_IRQn, 0);
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
 
 	/* USER CODE BEGIN MX_GPIO_Init_2 */
 	/* USER CODE END MX_GPIO_Init_2 */

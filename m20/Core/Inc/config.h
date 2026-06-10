@@ -62,7 +62,10 @@ const static float QRG_AFSK[] = {
 // Radio settings
 #define RF_BOOST 1 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
 
-#define ADF_FREQ_CORRECTION 19 // correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
+#define ADF_PPS_CORRECTION_ENABLE 1 // Enable radio module frequency correction based on 1 PPS signal from GPS module. Requires wiring the 1PPS pin of GPS module to PB2.
+#define ADF_MAX_PPS_CORRECTION 10 // Max correction bounds, ignores PPS data when it is exceded
+#define ADF_FREQ_INITIAL_CORRECTION 19 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
+
 #define ADF_FSK_DEVIATION 5    // Deviation parameter used in AFSK modem, don't change it without a reason, 5= about 5k5Hz, 10=11kHz
 
 // GPS configuration

@@ -30,6 +30,9 @@
 #if APRS_ENABLE
 #include "afsk.h"
 #endif
+#if ADF_PPS_CORRECTION_ENABLE
+#include "adf.h"
+#endif
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -139,6 +142,30 @@ void SysTick_Handler(void) {
 /******************************************************************************/
 
 /**
+ * @brief This function handles EXTI line 2 and line 3 interrupts.
+ */
+void EXTI2_3_IRQHandler(void) {
+	/* USER CODE BEGIN EXTI2_3_IRQn 0 */
+
+	/* USER CODE END EXTI2_3_IRQn 0 */
+	if (LL_EXTI_IsActiveFlag_0_31(LL_EXTI_LINE_2) != RESET) {
+		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
+		/* USER CODE BEGIN LL_EXTI_LINE_2 */
+		#if ADF_PPS_CORRECTION_ENABLE
+		uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
+		int16_t fix = (-2*(cnt - SystemCoreClock))/(3*244);
+		if(-ADF_MAX_PPS_CORRECTION<fix && fix<ADF_MAX_PPS_CORRECTION) adf_set_frequency_error_correction(fix);
+		// Check if the fix is within reasonable bounds
+		TIM22_High=0;
+		#endif
+		/* USER CODE END LL_EXTI_LINE_2 */
+	}
+	/* USER CODE BEGIN EXTI2_3_IRQn 1 */
+
+	/* USER CODE END EXTI2_3_IRQn 1 */
+}
+
+/**
  * @brief This function handles TIM2 global interrupt.
  */
 void TIM2_IRQHandler(void) {
@@ -197,7 +224,9 @@ void TIM22_IRQHandler(void) {
 	/* USER CODE BEGIN TIM22_IRQn 0 */
 	if (LL_TIM_IsActiveFlag_UPDATE(TIM22)) {
 		LL_TIM_ClearFlag_UPDATE(TIM22);
-		//
+		#if ADF_PPS_CORRECTION_ENABLE
+		TIM22_High++;
+		#endif
 	}
 	/* USER CODE END TIM22_IRQn 0 */
 	/* USER CODE BEGIN TIM22_IRQn 1 */
