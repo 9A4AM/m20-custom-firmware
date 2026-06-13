@@ -64,13 +64,13 @@ const static float QRG_AFSK[] = {
 
 #define ADF_PPS_CORRECTION_ENABLE 1 // Enable radio module frequency correction based on 1 PPS signal from GPS module. Requires wiring the 1PPS pin of GPS module to PB2.
 #define ADF_PPS_CORRECTION_REQUIRE_FIX 1 // Require GPS lock for making GPS corrections
-#define ADF_MAX_PPS_CORRECTION 10 // Max correction bounds, ignores PPS data when it is exceded
-#define ADF_FREQ_INITIAL_CORRECTION 19 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
+#define ADF_MAX_PPS_CORRECTION 10000 // Max correction bounds, ignores PPS data when it is exceded
+#define ADF_FREQ_INITIAL_CORRECTION 7 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
 
 #define ADF_FSK_DEVIATION 5    // Deviation parameter used in AFSK modem, don't change it without a reason, 5= about 5k5Hz, 10=11kHz
 
 // GPS configuration
-#define GPS_TYPE 1 // Type of GPS module: 1 - u-blox | 2 - XM1110
+#define GPS_TYPE 2 // Type of GPS module: 1 - u-blox | 2 - XM1110
 
 #define GPS_WATCHDOG 1 // Enable GPS watchdog
 #define GPS_WATCHDOG_ARC                                                                                                                             \
@@ -92,7 +92,7 @@ const static float QRG_AFSK[] = {
 #define PV_ADC_R2 2 // Resistor value in ohm from PA0 to ground
 // These values should have zeros removed if possible, e.g. for resistors R1=1000ohm and R2=2000ohm PV_ADC_R1 = 1 and PV_ADC_R2 = 2.
 
-#define IWDG_ENABLE 1
+#define IWDG_ENABLE 0
 
 // Debug
 #define DEBUG 0

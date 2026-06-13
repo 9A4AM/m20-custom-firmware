@@ -654,6 +654,12 @@ int main(void) {
 	LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin); // LED OFF
 #endif
 
+	// PPS freq correction timer
+#if ADF_PPS_CORRECTION_ENABLE
+	LL_TIM_EnableCounter(TIM22);
+	LL_TIM_EnableIT_UPDATE(TIM22);
+#endif
+
 	// main loop timer
 	LL_TIM_EnableCounter(TIM2);
 	LL_TIM_EnableIT_UPDATE(TIM2);

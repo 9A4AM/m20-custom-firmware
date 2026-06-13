@@ -245,8 +245,9 @@ void adf_set_vco_adjust(uint8_t adjust) {
 	adf_config.r0.vco_adjust = adjust;
 }
 
+uint32_t adf_clock = ADF_CLOCK;
 void adf_set_frequency(float freq) {
-	float latch = freq / ADF_CLOCK; // changed for 9MHz input
+	float latch = freq / adf_clock; // changed for 9MHz input
 	uint32_t Nint = latch;
 	latch = latch - Nint;
 	uint32_t Nfrac = latch * 4096;

@@ -31,6 +31,8 @@ void adf_RF_on(float freq, uint8_t power);
 void adf_RF_off(void);
 void adf_set_deviation(uint16_t modulation_deviation);
 
+extern uint32_t adf_clock;
+
 // General Purpose ===========================================================
 #define ADF_OFF 0
 #define ADF_ON 1
