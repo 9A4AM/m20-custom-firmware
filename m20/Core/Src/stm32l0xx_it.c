@@ -158,17 +158,15 @@ void EXTI2_3_IRQHandler(void) {
 		volatile uint32_t fixed_clk = (2*(cnt))/3;
 		bool in_tx = false;
 		#if HORUS_ENABLE
-		if (FSK4_Active) in_tx=false;
+		if (FSK4_Active) in_tx=true;
 		#endif
 		#if APRS_ENABLE
-		if (AFSK_Active) in_tx=false;
+		if (AFSK_Active) in_tx=true;
 		#endif
 		if(in_tx == false){
 			if(ADF_CLOCK-fixed_clk>ADF_MAX_PPS_CORRECTION && fixed_clk-ADF_CLOCK<ADF_MAX_PPS_CORRECTION && (!ADF_PPS_CORRECTION_REQUIRE_FIX || gps_fix > 1)){
 				adf_clock = fixed_clk;
 			}
-		}else{
-			asm("NOP");
 		}
 		// Check if the fix is within reasonable bounds
 
