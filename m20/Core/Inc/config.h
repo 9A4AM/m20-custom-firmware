@@ -60,7 +60,7 @@ const static float QRG_AFSK[] = {
 #define LED_MODE_2_BLINK_PAUSE 200 // pause time between LED blinks in GPS fix mode
 
 // Radio settings
-#define RF_BOOST 1 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
+#define RF_BOOST 0 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
 
 #define ADF_PPS_CORRECTION_ENABLE 1 // Enable radio module frequency correction based on 1 PPS signal from GPS module. Requires wiring the 1PPS pin of GPS module to PB2.
 #define ADF_PPS_CORRECTION_REQUIRE_FIX 1 // Require GPS lock for making GPS corrections
