@@ -14,7 +14,7 @@
 const static float QRG_FSK4[] = {
     435100000};       // 4FSK transmitted frequencies array, switched in a loop, add new frequencies (in Hz) after a comma in braces. Commonly used
                       // frequencies: https://github.com/projecthorus/horusdemodlib/wiki#commonly-used-frequencies
-#define FSK4_POWER 10 // RF power setting for horus transmission values 0-63
+#define FSK4_POWER 30 // RF power setting for horus transmission values 0-63
 
 #define HORUS_V2_PAYLOAD_ID                                                                                                                          \
 	256 // Sonde payload ID 256 - for 4FSKTEST-V2, change this for real flight, refer to
