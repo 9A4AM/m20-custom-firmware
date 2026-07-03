@@ -164,7 +164,9 @@ void EXTI2_3_IRQHandler(void) {
 		if (AFSK_Active) in_tx=true;
 		#endif
 		if(in_tx == false){
-			if(((int32_t)ADF_CLOCK-(int32_t)fixed_clk)<ADF_MAX_PPS_CORRECTION && ((int32_t)fixed_clk-(int32_t)ADF_CLOCK)<ADF_MAX_PPS_CORRECTION && (!ADF_PPS_CORRECTION_REQUIRE_FIX || gps_fix > 1)){
+			if(((int32_t)ADF_CLOCK-(int32_t)fixed_clk)<ADF_MAX_PPS_CORRECTION &&
+			((int32_t)fixed_clk-(int32_t)ADF_CLOCK)<ADF_MAX_PPS_CORRECTION &&
+			(!ADF_PPS_CORRECTION_REQUIRE_FIX || *gps_fix > 1)){
 				adf_clock = fixed_clk;
 			}
 		}
