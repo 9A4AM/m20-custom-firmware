@@ -1106,7 +1106,7 @@ static void MX_TIM6_Init(void) {
 	NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
 	/* USER CODE BEGIN TIM6_Init 1 */
-	TIM_InitStruct.Autoreload = ((LED_PERIOD * 1000) / 5) - 1;
+	TIM_InitStruct.Autoreload = ((LED_TIMER_PERIOD * 1000) / 5) - 1;
 	/* USER CODE END TIM6_Init 1 */
 	TIM_InitStruct.Prescaler = 60000;
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -1459,18 +1459,29 @@ void GPS_Handler(void) {
 	}
 }
 #if LED_MODE == 2
+uint8_t led_cnt = 0;
+uint8_t led_wait = 0;
 void LED_Handler(void) {
-	uint8_t fix = GpsData.Fix;
-	uint16_t alt = GpsData.Alt;
-	if (LED_DISABLE_ALT != 0 && alt >= LED_DISABLE_ALT) {
+	if (LED_DISABLE_ALT != 0 && GpsData.Alt >= LED_DISABLE_ALT) {
+		LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
 		LL_TIM_DisableCounter(TIM6);
 		LL_TIM_DisableIT_UPDATE(TIM6);
 	}
-	for (; fix > 0; fix--) {
-		LL_GPIO_SetOutputPin(LED_GPIO_Port, LED_Pin);
-		DelayWithIWDG(LED_MODE_2_BLINK_TIME);
-		LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
-		DelayWithIWDG(LED_MODE_2_BLINK_PAUSE);
+	if(GpsData.Fix>0){
+		if(led_cnt>0){
+			if(led_cnt%2==0){
+				LL_GPIO_SetOutputPin(LED_GPIO_Port, LED_Pin);
+			}else{
+				LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
+			}
+			led_cnt--;
+			if(led_cnt==0) led_wait = (LED_PERIOD*1000)/LED_TIMER_PERIOD;
+		}else if(led_wait > 0){
+			led_wait--;
+		}else{
+			led_cnt = GpsData.Fix*2;
+			if(led_cnt==3*2 && adf_clock != ADF_CLOCK) led_cnt+=2;
+		}
 	}
 }
 #endif
