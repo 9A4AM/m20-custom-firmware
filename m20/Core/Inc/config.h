@@ -54,11 +54,9 @@ const static float QRG_AFSK[] = {
 
 // LED settings
 #define LED_MODE 2                 // 0 - disabled, 1 - flashes when prepairing tx data before transmit, 2 - GPS fix indication
-#define LED_TIMER_PERIOD 100       // time between LED lighting
-#define LED_PERIOD 5               // time between LED lighting
+#define LED_TIMER_PERIOD 150       // time between LED lighting
+#define LED_PERIOD 3               // time between LED lighting
 #define LED_DISABLE_ALT 1000       // disable led when certain altitude is reached, 0 for always enable
-#define LED_MODE_2_BLINK_TIME 1  // single LED blink time in GPS fix mode
-#define LED_MODE_2_BLINK_PAUSE 2 // pause time between LED blinks in GPS fix mode
 
 // Radio settings
 #define RF_BOOST 1 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
@@ -68,7 +66,7 @@ const static float QRG_AFSK[] = {
 #define ADF_PPS_DEFAULT_FALLBACK 1 // when fix is lost or max correction value is exceded fallback to the default static inital correction
 #define ADF_MAX_PPS_CORRECTION 5000 // Max correction bounds, ignores PPS data when it is exceded
 #define ADF_FREQ_INITIAL_CORRECTION 20 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
-#define ADF_FREQ_CORRECTION 5 // correction added after the GPS PPS fix
+#define ADF_FREQ_CORRECTION 4 // correction added after the GPS PPS fix
 
 #define ADF_FSK_DEVIATION 5    // Deviation parameter used in AFSK modem, don't change it without a reason, 5= about 5k5Hz, 10=11kHz
 

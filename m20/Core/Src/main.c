@@ -667,9 +667,10 @@ int main(void) {
 
 	/* Interrupt priorites:
 	 * TIM21 - modulation timer: 0
-	 * LPUART1 - GPS UART RX: 1
-	 * TIM22 - Frequency correction timer: 2
-	 * TIM6 - LED timer: 3
+	* TIM6 - LED timer: 0
+	* TIM22 - Frequency correction timer: 0
+	 * EXTI2_3 - GPS PPS correction: 1
+	 * LPUART1 - GPS UART RX: 2
 	 * SysTick: 4
 	 * TIM2 - main loop: 5
 	 */
@@ -904,7 +905,7 @@ static void MX_LPUART1_UART_Init(void) {
 	LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	/* LPUART1 interrupt Init */
-	NVIC_SetPriority(LPUART1_IRQn, 1);
+	NVIC_SetPriority(LPUART1_IRQn, 2);
 	NVIC_EnableIRQ(LPUART1_IRQn);
 
 	/* USER CODE BEGIN LPUART1_Init 1 */
@@ -1102,11 +1103,11 @@ static void MX_TIM6_Init(void) {
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
 
 	/* TIM6 interrupt Init */
-	NVIC_SetPriority(TIM6_DAC_IRQn, 3);
+	NVIC_SetPriority(TIM6_DAC_IRQn, 0);
 	NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
 	/* USER CODE BEGIN TIM6_Init 1 */
-	TIM_InitStruct.Autoreload = ((LED_TIMER_PERIOD * 1000) / 5) - 1;
+	TIM_InitStruct.Autoreload = (LED_TIMER_PERIOD / 5) - 1;
 	/* USER CODE END TIM6_Init 1 */
 	TIM_InitStruct.Prescaler = 60000;
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -1191,7 +1192,7 @@ static void MX_TIM22_Init(void) {
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM22);
 
 	/* TIM22 interrupt Init */
-	NVIC_SetPriority(TIM22_IRQn, 2);
+	NVIC_SetPriority(TIM22_IRQn, 0);
 	NVIC_EnableIRQ(TIM22_IRQn);
 
 	/* USER CODE BEGIN TIM22_Init 1 */
@@ -1425,7 +1426,7 @@ static void MX_GPIO_Init(void) {
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/* EXTI interrupt init*/
-	NVIC_SetPriority(EXTI2_3_IRQn, 0);
+	NVIC_SetPriority(EXTI2_3_IRQn, 1);
 	NVIC_EnableIRQ(EXTI2_3_IRQn);
 
 	/* USER CODE BEGIN MX_GPIO_Init_2 */
