@@ -656,6 +656,7 @@ int main(void) {
 
 	// PPS freq correction timer
 #if ADF_PPS_CORRECTION_ENABLE
+	LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
 	LL_TIM_EnableCounter(TIM22);
 	LL_TIM_EnableIT_UPDATE(TIM22);
 #endif
