@@ -152,10 +152,10 @@ void EXTI2_3_IRQHandler(void) {
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
 		/* USER CODE BEGIN LL_EXTI_LINE_2 */
 		#if ADF_PPS_CORRECTION_ENABLE
-		volatile uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
+		uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
 		TIM22_High=0;
 		TIM22->CNT = 0;
-		volatile uint32_t fixed_clk = (2*(cnt))/3;
+		uint32_t fixed_clk = (2*(cnt))/3;
 		bool in_tx = false;
 		#if HORUS_ENABLE
 		if (FSK4_Active) in_tx=true;
@@ -168,7 +168,7 @@ void EXTI2_3_IRQHandler(void) {
 			((int32_t)fixed_clk-(int32_t)ADF_CLOCK)<ADF_MAX_PPS_CORRECTION &&
 			(!ADF_PPS_CORRECTION_REQUIRE_FIX || *gps_fix > 1)){
 				adf_clock = fixed_clk;
-				adf_set_frequency_error_correction(0);
+				adf_set_frequency_error_correction(ADF_FREQ_CORRECTION);
 			}else{
 				adf_set_frequency_error_correction(ADF_FREQ_INITIAL_CORRECTION);
 				adf_clock = ADF_CLOCK;

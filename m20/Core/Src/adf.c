@@ -234,7 +234,7 @@ void adf_write_register(uint32_t data) {
 
 // Configuration setting functions ---------------------------------------
 void adf_set_frequency_error_correction(int16_t error) {
-	adf_config.r0.frequency_error_correction = ADF_FREQ_INITIAL_CORRECTION + error;
+	adf_config.r0.frequency_error_correction = error;
 }
 
 void adf_set_r_divider(uint8_t r) {
