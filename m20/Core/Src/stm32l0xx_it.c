@@ -169,9 +169,9 @@ void EXTI2_3_IRQHandler(void) {
 			(!ADF_PPS_CORRECTION_REQUIRE_FIX || *gps_fix > 1)){
 				adf_clock = fixed_clk;
 				adf_set_frequency_error_correction(ADF_FREQ_CORRECTION);
-			}else{
-				adf_set_frequency_error_correction(ADF_FREQ_INITIAL_CORRECTION);
+			}else if (ADF_PPS_DEFAULT_FALLBACK){
 				adf_clock = ADF_CLOCK;
+				adf_set_frequency_error_correction(ADF_FREQ_INITIAL_CORRECTION);
 			}
 			// Check if the fix is within reasonable bounds
 		}

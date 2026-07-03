@@ -63,7 +63,7 @@ const static float QRG_AFSK[] = {
 
 #define ADF_PPS_CORRECTION_ENABLE 1 // Enable radio module frequency correction based on 1 PPS signal from GPS module. Requires wiring the 1PPS pin of GPS module to PB2.
 #define ADF_PPS_CORRECTION_REQUIRE_FIX 1 // Require GPS lock for making GPS corrections
-#define ADF_PPS_DEFAULT_FALLBACK 1 // when fix is lost or max correction value is exceded fallback to the default static inital correction
+#define ADF_PPS_DEFAULT_FALLBACK 0 // when fix is lost or max correction value is exceded fallback to the default static inital correction
 #define ADF_MAX_PPS_CORRECTION 5000 // Max correction bounds, ignores PPS data when it is exceded
 #define ADF_FREQ_INITIAL_CORRECTION 20 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
 #define ADF_FREQ_CORRECTION 4 // correction added after the GPS PPS fix
