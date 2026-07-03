@@ -14,7 +14,7 @@
 const static float QRG_FSK4[] = {
     435100000};       // 4FSK transmitted frequencies array, switched in a loop, add new frequencies (in Hz) after a comma in braces. Commonly used
                       // frequencies: https://github.com/projecthorus/horusdemodlib/wiki#commonly-used-frequencies
-#define FSK4_POWER 10 // RF power setting for horus transmission values 0-63
+#define FSK4_POWER 30 // RF power setting for horus transmission values 0-63
 
 #define HORUS_V2_PAYLOAD_ID                                                                                                                          \
 	256 // Sonde payload ID 256 - for 4FSKTEST-V2, change this for real flight, refer to
@@ -60,7 +60,7 @@ const static float QRG_AFSK[] = {
 #define LED_MODE_2_BLINK_PAUSE 200 // pause time between LED blinks in GPS fix mode
 
 // Radio settings
-#define RF_BOOST 0 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
+#define RF_BOOST 1 // RF booster enabled for transmissions about 15dB gain, but more power consumed - normally should be ON(1).
 
 #define ADF_PPS_CORRECTION_ENABLE 1 // Enable radio module frequency correction based on 1 PPS signal from GPS module. Requires wiring the 1PPS pin of GPS module to PB2.
 #define ADF_PPS_CORRECTION_REQUIRE_FIX 1 // Require GPS lock for making GPS corrections
