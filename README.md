@@ -214,7 +214,7 @@ Hardware requirements:
 - A computer with Linux or Windows
 
 ## Recomended hardware modifications
-## Load resistor
+### Load resistor
 If you have a sonde with new GPS module, there is a additional parallel 62 Ohm resistor added at the output of the voltage converter, all it does it drawing ~53mA from the line and converting it to heat. I have no idea why it was added, removing it does not make the power supply unstable or anything like that, maybe it was added for draining the battery quicker or heating up the board. You can safely remove this resistor to save some energy from the battery.
 This is the resistor:
 
@@ -226,7 +226,20 @@ Thermal camera image:
 
 (Image from SP9AOB)
 
-## PV / payload voltage ADC
+### using 1PPS for frequency correction
+
+The M20 radio module is fed with clock signal directly from internal 8MHz quartz oscilator. It is not a TCXO and therefore its frequency is changing dramaticaly with temperature. Here is an example image of transmitted frequency changes on a flight.
+(img here)
+There exist an option to correct this but it requires a hardware modification. Both versions of GPS modules provide a pin with a very stable 1 Hz signal (PPS). It can be used to correct the internal quartz frequency by counting number of clock cycles in one PPS pulse.
+
+To use this the 1PPS pin needs to be connected with PB2 pin available as a pin slot in the sonde PCB.
+
+#### New GPS
+(schematic)
+#### Old GPS
+(schematic)
+
+### PV / payload voltage ADC
 Pin PA0 allows to measure additional voltage, for example from another payload batteries or from a solar panel (PV). It uses a resistor divider to allow voltages bigger than the ADC reference 3.3V. To enable it set `PV_ADC_ENABLE` to 1.
 This is the connection schematic, green is PA0 pin, black is ground (other GND can be used as well):
 

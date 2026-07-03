@@ -16,7 +16,7 @@ void adf_write_register_one(void);
 void adf_write_register_two(void);
 void adf_write_register_three(void);
 void adf_write_register(uint32_t data);
-void adf_set_frequency_error_correction(uint16_t error);
+void adf_set_frequency_error_correction(int16_t error);
 void adf_set_r_divider(uint8_t r);
 void adf_set_vco_adjust(uint8_t adjust);
 void adf_set_frequency(float freq);
@@ -30,6 +30,8 @@ void adf_setup(void);
 void adf_RF_on(float freq, uint8_t power);
 void adf_RF_off(void);
 void adf_set_deviation(uint16_t modulation_deviation);
+
+extern uint32_t adf_clock;
 
 // General Purpose ===========================================================
 #define ADF_OFF 0

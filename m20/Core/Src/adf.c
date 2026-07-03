@@ -86,7 +86,7 @@ void adf_reset_config(void) {
  */
 
 void adf_reset_register_zero(void) {
-	adf_config.r0.frequency_error_correction = ADF_FREQ_CORRECTION; // 11Bit Freq err corr 0b10011 - or whatever reason
+	adf_config.r0.frequency_error_correction = ADF_FREQ_INITIAL_CORRECTION; // 11Bit Freq err corr 0b10011 - or whatever reason
 	                                                                // M20
 	adf_config.r0.r_divider = 1;
 	adf_config.r0.crystal_doubler = ADF_OFF;
@@ -233,7 +233,7 @@ void adf_write_register(uint32_t data) {
 }
 
 // Configuration setting functions ---------------------------------------
-void adf_set_frequency_error_correction(uint16_t error) {
+void adf_set_frequency_error_correction(int16_t error) {
 	adf_config.r0.frequency_error_correction = error;
 }
 
@@ -245,8 +245,9 @@ void adf_set_vco_adjust(uint8_t adjust) {
 	adf_config.r0.vco_adjust = adjust;
 }
 
+uint32_t adf_clock = ADF_CLOCK;
 void adf_set_frequency(float freq) {
-	float latch = freq / ADF_CLOCK; // changed for 9MHz input
+	float latch = freq / adf_clock; // changed for 9MHz input
 	uint32_t Nint = latch;
 	latch = latch - Nint;
 	uint32_t Nfrac = latch * 4096;

@@ -58,6 +58,7 @@ uint8_t GpsRxBuffer[GpsRxBuffer_SIZE];
 uint16_t GpsBufferCounter = 0;
 bool GpsBufferReady = false;
 GPS GpsData;
+uint8_t *gps_fix = &GpsData.Fix;
 
 #if GPS_WATCHDOG
 struct GpsWatchdogStruct {
@@ -85,6 +86,10 @@ uint16_t RawPvVoltage = 0;
 uint16_t PvVoltage = 0;
 
 int16_t ExtTemp = 0; // *10
+
+#if ADF_PPS_CORRECTION_ENABLE
+uint16_t TIM22_High = 0;
+#endif
 
 #if APRS_ENABLE
 APRSPacket AprsPacket;
@@ -649,15 +654,23 @@ int main(void) {
 	LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin); // LED OFF
 #endif
 
+	// PPS freq correction timer
+#if ADF_PPS_CORRECTION_ENABLE
+	LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
+	LL_TIM_EnableCounter(TIM22);
+	LL_TIM_EnableIT_UPDATE(TIM22);
+#endif
+
 	// main loop timer
 	LL_TIM_EnableCounter(TIM2);
 	LL_TIM_EnableIT_UPDATE(TIM2);
 
 	/* Interrupt priorites:
 	 * TIM21 - modulation timer: 0
-	 * LPUART1 - GPS UART RX: 1
-	 * TIM22 - Humidity timer (not yet): 2
-	 * TIM6 - LED timer: 3
+	* TIM6 - LED timer: 0
+	* TIM22 - Frequency correction timer: 0
+	 * EXTI2_3 - GPS PPS correction: 1
+	 * LPUART1 - GPS UART RX: 2
 	 * SysTick: 4
 	 * TIM2 - main loop: 5
 	 */
@@ -892,7 +905,7 @@ static void MX_LPUART1_UART_Init(void) {
 	LL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
 	/* LPUART1 interrupt Init */
-	NVIC_SetPriority(LPUART1_IRQn, 1);
+	NVIC_SetPriority(LPUART1_IRQn, 2);
 	NVIC_EnableIRQ(LPUART1_IRQn);
 
 	/* USER CODE BEGIN LPUART1_Init 1 */
@@ -1090,11 +1103,11 @@ static void MX_TIM6_Init(void) {
 	LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_TIM6);
 
 	/* TIM6 interrupt Init */
-	NVIC_SetPriority(TIM6_DAC_IRQn, 3);
+	NVIC_SetPriority(TIM6_DAC_IRQn, 0);
 	NVIC_EnableIRQ(TIM6_DAC_IRQn);
 
 	/* USER CODE BEGIN TIM6_Init 1 */
-	TIM_InitStruct.Autoreload = ((LED_PERIOD * 1000) / 5) - 1;
+	TIM_InitStruct.Autoreload = (LED_TIMER_PERIOD / 5) - 1;
 	/* USER CODE END TIM6_Init 1 */
 	TIM_InitStruct.Prescaler = 60000;
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
@@ -1179,15 +1192,15 @@ static void MX_TIM22_Init(void) {
 	LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_TIM22);
 
 	/* TIM22 interrupt Init */
-	NVIC_SetPriority(TIM22_IRQn, 2);
+	NVIC_SetPriority(TIM22_IRQn, 0);
 	NVIC_EnableIRQ(TIM22_IRQn);
 
 	/* USER CODE BEGIN TIM22_Init 1 */
 
 	/* USER CODE END TIM22_Init 1 */
-	TIM_InitStruct.Prescaler = 60000; // For now
+	TIM_InitStruct.Prescaler = 0;
 	TIM_InitStruct.CounterMode = LL_TIM_COUNTERMODE_UP;
-	TIM_InitStruct.Autoreload = 2400; // For now
+	TIM_InitStruct.Autoreload = 65535;
 	TIM_InitStruct.ClockDivision = LL_TIM_CLOCKDIVISION_DIV1;
 	LL_TIM_Init(TIM22, &TIM_InitStruct);
 	LL_TIM_DisableARRPreload(TIM22);
@@ -1205,6 +1218,7 @@ static void MX_TIM22_Init(void) {
  * @retval None
  */
 static void MX_GPIO_Init(void) {
+	LL_EXTI_InitTypeDef EXTI_InitStruct = {0};
 	LL_GPIO_InitTypeDef GPIO_InitStruct = {0};
 	/* USER CODE BEGIN MX_GPIO_Init_1 */
 	/* USER CODE END MX_GPIO_Init_1 */
@@ -1395,6 +1409,26 @@ static void MX_GPIO_Init(void) {
 	GPIO_InitStruct.Pull = LL_GPIO_PULL_NO;
 	LL_GPIO_Init(NTC_330K_GPIO_Port, &GPIO_InitStruct);
 
+	/**/
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTB, LL_SYSCFG_EXTI_LINE2);
+
+	/**/
+	LL_GPIO_SetPinPull(GPIOB, LL_GPIO_PIN_2, LL_GPIO_PULL_NO);
+
+	/**/
+	LL_GPIO_SetPinMode(GPIOB, LL_GPIO_PIN_2, LL_GPIO_MODE_INPUT);
+
+	/**/
+	EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_2;
+	EXTI_InitStruct.LineCommand = ENABLE;
+	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_RISING;
+	LL_EXTI_Init(&EXTI_InitStruct);
+
+	/* EXTI interrupt init*/
+	NVIC_SetPriority(EXTI2_3_IRQn, 1);
+	NVIC_EnableIRQ(EXTI2_3_IRQn);
+
 	/* USER CODE BEGIN MX_GPIO_Init_2 */
 	/* USER CODE END MX_GPIO_Init_2 */
 }
@@ -1426,18 +1460,29 @@ void GPS_Handler(void) {
 	}
 }
 #if LED_MODE == 2
+uint8_t led_cnt = 0;
+uint8_t led_wait = 0;
 void LED_Handler(void) {
-	uint8_t fix = GpsData.Fix;
-	uint16_t alt = GpsData.Alt;
-	if (LED_DISABLE_ALT != 0 && alt >= LED_DISABLE_ALT) {
+	if (LED_DISABLE_ALT != 0 && GpsData.Alt >= LED_DISABLE_ALT) {
+		LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
 		LL_TIM_DisableCounter(TIM6);
 		LL_TIM_DisableIT_UPDATE(TIM6);
 	}
-	for (; fix > 0; fix--) {
-		LL_GPIO_SetOutputPin(LED_GPIO_Port, LED_Pin);
-		DelayWithIWDG(LED_MODE_2_BLINK_TIME);
-		LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
-		DelayWithIWDG(LED_MODE_2_BLINK_PAUSE);
+	if(GpsData.Fix>0){
+		if(led_cnt>0){
+			if(led_cnt%2==0){
+				LL_GPIO_SetOutputPin(LED_GPIO_Port, LED_Pin);
+			}else{
+				LL_GPIO_ResetOutputPin(LED_GPIO_Port, LED_Pin);
+			}
+			led_cnt--;
+			if(led_cnt==0) led_wait = (LED_PERIOD*1000)/LED_TIMER_PERIOD;
+		}else if(led_wait > 0){
+			led_wait--;
+		}else{
+			led_cnt = GpsData.Fix*2;
+			if(led_cnt==3*2 && adf_clock != ADF_CLOCK) led_cnt+=2;
+		}
 	}
 }
 #endif
