@@ -28,7 +28,7 @@ const static float QRG_FSK4[] = {
 #define TX_PAUSE 500 // Delay between HORUS and APRS
 
 // APRS (AX.25 AFSK HDLC Bell 202)
-#define APRS_ENABLE 0
+#define APRS_ENABLE 1
 
 const static float QRG_AFSK[] = {
     435100000};               // AFSK transmitted frequencies array, switched in a loop, add new frequencies (in Hz) after a comma in braces.
@@ -66,8 +66,8 @@ const static float QRG_AFSK[] = {
 #define ADF_PPS_CORRECTION_REQUIRE_FIX 1 // Require GPS lock for making GPS corrections
 #define ADF_PPS_DEFAULT_FALLBACK 1 // when fix is lost or max correction value is exceded fallback to the default static inital correction
 #define ADF_MAX_PPS_CORRECTION 5000 // Max correction bounds, ignores PPS data when it is exceded
-#define ADF_FREQ_INITIAL_CORRECTION 25 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
-#define ADF_FREQ_CORRECTION 7 // correction added after the GPS PPS fix
+#define ADF_FREQ_INITIAL_CORRECTION 20 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
+#define ADF_FREQ_CORRECTION 8 // correction added after the GPS PPS fix
 
 #define ADF_FSK_DEVIATION 5    // Deviation parameter used in AFSK modem, don't change it without a reason, 5= about 5k5Hz, 10=11kHz
 
