@@ -1425,7 +1425,7 @@ static void MX_GPIO_Init(void) {
 	LL_EXTI_Init(&EXTI_InitStruct);
 
 	/* EXTI interrupt init*/
-	NVIC_SetPriority(EXTI2_3_IRQn, 1);
+	NVIC_SetPriority(EXTI2_3_IRQn, 0);
 	NVIC_EnableIRQ(EXTI2_3_IRQn);
 
 	/* USER CODE BEGIN MX_GPIO_Init_2 */

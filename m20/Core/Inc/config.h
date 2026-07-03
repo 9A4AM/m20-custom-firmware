@@ -67,7 +67,7 @@ const static float QRG_AFSK[] = {
 #define ADF_PPS_DEFAULT_FALLBACK 1 // when fix is lost or max correction value is exceded fallback to the default static inital correction
 #define ADF_MAX_PPS_CORRECTION 5000 // Max correction bounds, ignores PPS data when it is exceded
 #define ADF_FREQ_INITIAL_CORRECTION 20 // initial correction of frequency from crystal inaccuracy in 244Hz steps. To be individually set for each sonde.
-#define ADF_FREQ_CORRECTION 8 // correction added after the GPS PPS fix
+#define ADF_FREQ_CORRECTION 5 // correction added after the GPS PPS fix
 
 #define ADF_FSK_DEVIATION 5    // Deviation parameter used in AFSK modem, don't change it without a reason, 5= about 5k5Hz, 10=11kHz
 
@@ -94,7 +94,7 @@ const static float QRG_AFSK[] = {
 #define PV_ADC_R2 2 // Resistor value in ohm from PA0 to ground
 // These values should have zeros removed if possible, e.g. for resistors R1=1000ohm and R2=2000ohm PV_ADC_R1 = 1 and PV_ADC_R2 = 2.
 
-#define IWDG_ENABLE 0
+#define IWDG_ENABLE 1
 
 // Debug
 #define DEBUG 0

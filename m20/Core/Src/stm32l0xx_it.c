@@ -152,10 +152,6 @@ void EXTI2_3_IRQHandler(void) {
 		LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_2);
 		/* USER CODE BEGIN LL_EXTI_LINE_2 */
 		#if ADF_PPS_CORRECTION_ENABLE
-		uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
-		TIM22_High=0;
-		TIM22->CNT = 0;
-		uint32_t fixed_clk = (2*(cnt))/3;
 		bool in_tx = false;
 		#if HORUS_ENABLE
 		if (FSK4_Active) in_tx=true;
@@ -164,6 +160,10 @@ void EXTI2_3_IRQHandler(void) {
 		if (AFSK_Active) in_tx=true;
 		#endif
 		if(in_tx == false){
+			uint32_t cnt = (TIM22->CNT & 0xFFFF) | (TIM22_High<<16 & 0xFFFF0000);
+			TIM22_High=0;
+			TIM22->CNT = 0;
+			uint32_t fixed_clk = (2*(cnt))/3;
 			if(((int32_t)ADF_CLOCK-(int32_t)fixed_clk)<ADF_MAX_PPS_CORRECTION &&
 			((int32_t)fixed_clk-(int32_t)ADF_CLOCK)<ADF_MAX_PPS_CORRECTION &&
 			(!ADF_PPS_CORRECTION_REQUIRE_FIX || *gps_fix > 1)){
@@ -173,9 +173,8 @@ void EXTI2_3_IRQHandler(void) {
 				adf_set_frequency_error_correction(ADF_FREQ_INITIAL_CORRECTION);
 				adf_clock = ADF_CLOCK;
 			}
+			// Check if the fix is within reasonable bounds
 		}
-		// Check if the fix is within reasonable bounds
-
 		#endif
 		/* USER CODE END LL_EXTI_LINE_2 */
 	}
