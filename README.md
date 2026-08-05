@@ -229,15 +229,20 @@ Thermal camera image:
 ### using 1PPS for frequency correction
 
 The M20 radio module is fed with clock signal directly from internal 8MHz quartz oscilator. It is not a TCXO and therefore its frequency is changing dramaticaly with temperature. Here is an example image of transmitted frequency changes on a flight.
-(img here)
+
 There exist an option to correct this but it requires a hardware modification. Both versions of GPS modules provide a pin with a very stable 1 Hz signal (PPS). It can be used to correct the internal quartz frequency by counting number of clock cycles in one PPS pulse.
 
-To use this the 1PPS pin needs to be connected with PB2 pin available as a pin slot in the sonde PCB.
+To use this the 1PPS (timepulse) pin needs to be connected with PB2 pin available at the bottom goldpin connector pin on the sonde PCB.
+Additionally you need to enable `ADF_PPS_CORRECTION_ENABLE` in [Configuration](#Configuration).
 
 #### New GPS
-(schematic)
+In u-blox MAX-M10M PPS is pin number 4 (counting in to view from bottom left).
+<img width="448" height="552" alt="new_gps_img" src="https://github.com/user-attachments/assets/ccc01eb4-0c79-4f62-853f-135a252067a3" />
+
 #### Old GPS
-(schematic)
+In XM1110 PPS is pin number 18 (counting from top right dot, counterclockwise), it is the 3rd pin on the right side.
+<img width="425" height="532" alt="old_gps_img" src="https://github.com/user-attachments/assets/ad06e5bb-c2d5-43ea-94e6-0879e0e8eb17" />
+
 
 ### PV / payload voltage ADC
 Pin PA0 allows to measure additional voltage, for example from another payload batteries or from a solar panel (PV). It uses a resistor divider to allow voltages bigger than the ADC reference 3.3V. To enable it set `PV_ADC_ENABLE` to 1.
