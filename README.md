@@ -236,7 +236,7 @@ To use this the 1PPS (timepulse) pin needs to be connected with PB2 pin availabl
 Additionally you need to enable `ADF_PPS_CORRECTION_ENABLE` in [Configuration](#Configuration).
 
 #### New GPS
-In u-blox MAX-M10M PPS is pin number 4 (counting in to view from bottom left).
+In u-blox MAX-M10M PPS is pin number 4 (counting in top view from bottom left).
 <img width="448" height="552" alt="new_gps_img" src="https://github.com/user-attachments/assets/ccc01eb4-0c79-4f62-853f-135a252067a3" />
 
 #### Old GPS
